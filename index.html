@@ -18,8 +18,9 @@
      const button = document.querySelector('#play-button');
      const pattern = '001001010011';
      const tempo = 120;
-     const clavis = new Clavis(canvas, pattern, tempo);
+     const clavis = new Clavis();
 
+     clavis.configure(canvas, pattern, tempo);
      clavis.draw();
 
      button.addEventListener('click', e => {
