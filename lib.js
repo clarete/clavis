@@ -1,13 +1,24 @@
 class ClaveVisualization {
-  constructor(canvas, pattern) {
+  constructor(canvas, pattern, tempo) {
     this.canvas = canvas;
+    this.context = canvas.getContext('2d');
     this.pattern = pattern;
+    this.tempo = tempo;
+    this.animate = false;
+    this.draw = this.draw.bind(this);
   }
 
-  drawAllTheThings() {
-    const { canvas, pattern } = this;
-    const context = canvas.getContext('2d');
+  play() {
+    this.animate = true;
+    window.requestAnimationFrame(this.draw);
+  }
 
+  pause() {
+    this.animate = false;
+  }
+
+  draw() {
+    const { canvas, context, pattern } = this;
     const theme = {
       'canvas-padding': '20px',
       'canvas-width': 200,
@@ -22,6 +33,9 @@ class ClaveVisualization {
       'dot-off-radius': 2,
       'dot-off-stroke-style': '#ccc',
       'dot-off-fill-style': '#ccc',
+      'dot-beat-radius': 5,
+      'dot-beat-stroke-style': '#fc0',
+      'dot-beat-fill-style': '#fc0',
     };
 
     /* Canvas dimensions */
@@ -84,6 +98,15 @@ class ClaveVisualization {
       });
     }
 
+    function drawDotBeat(x, y) {
+      drawDot(x, y, {
+        radius: theme['dot-beat-radius'],
+        stroke: theme['dot-beat-stroke-style'],
+        fill: theme['dot-beat-fill-style'],
+      });
+    }
+
+    context.clearRect(0, 0, width, height);
     drawOuterCircle();
 
     const patternDots = [];
@@ -99,15 +122,19 @@ class ClaveVisualization {
       context.stroke();
     }
 
-    /* Find the equidistant points:
+    function coords(angle) {
+      /* Find the equidistant points:
+         Many thanks to
+         https://math.stackexchange.com/questions/2820194/how-to-plot-n-coords-to-distribute-evenly-as-a-ring-of-points-around-a-circle
+      */
+      const x = Math.cos(angle) * radius + width / 2;
+      const y = Math.sin(angle) * radius + height / 2;
+      return [x, y];
+    }
 
-       Many thanks to
-       https://math.stackexchange.com/questions/2820194/how-to-plot-n-coords-to-distribute-evenly-as-a-ring-of-points-around-a-circle
-    */
     for (let i = 0; i < pattern.length; i++) {
       const a = startAngle + angle * i;
-      const x = Math.cos(a) * radius + width / 2;
-      const y = Math.sin(a) * radius + height / 2;
+      const [x, y] = coords(a);
       if (pattern[i] === '1') {
         drawDotOn(x, y);
         patternDots.push([x, y]);
@@ -118,5 +145,19 @@ class ClaveVisualization {
 
     /* Connect the dots */
     connectDots(patternDots);
+
+    /* Draw the moving dot */
+    context.save();
+    const time = new Date;
+    const posFromTempo =
+        ((2 * Math.PI) / 3) * time.getSeconds() +
+        ((2 * Math.PI) / 3000) * time.getMilliseconds();
+    drawDotBeat(...coords(startAngle + posFromTempo));
+    context.restore();
+
+    /* Request new frame if animation is enabled */
+    if (this.animate) {
+      window.requestAnimationFrame(this.draw);
+    }
   }
 }

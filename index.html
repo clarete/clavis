@@ -6,21 +6,34 @@
     <meta name="description" content="A Polyrhythm editor">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-     body { background: #999; }
+     body { background: #999; text-align: center; }
     </style>
   </head>
   <body>
-    <div class="scene">
-      <canvas class="canvas"></canvas>
-    </div>
-
+    <canvas class="canvas"></canvas>
+    <div><button id="play-button">Play</button></div>
     <script src="lib.js"></script>
     <script>
-     const canvas = document.querySelector('canvas');
+     const canvas = document.querySelector('.canvas');
+     const button = document.querySelector('#play-button');
      const pattern = '001001010011';
-     const claveVisualization = new ClaveVisualization(canvas, pattern);
+     const tempo = 120;
+     const claveVisualization = new ClaveVisualization(canvas, pattern, tempo);
 
-     claveVisualization.drawAllTheThings();
+     claveVisualization.draw();
+
+     button.addEventListener('click', e => {
+       switch (e.target.innerHTML) {
+         case 'Play':
+           e.target.innerHTML = 'Pause';
+           claveVisualization.play();
+           break;
+         case 'Pause':
+           e.target.innerHTML = 'Play';
+           claveVisualization.pause();
+           break;
+       }
+     });
     </script>
   </body>
 </html>
