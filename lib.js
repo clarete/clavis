@@ -1,4 +1,4 @@
-class ClaveVisualization {
+class Clavis {
   constructor(canvas, pattern, tempo) {
     this.canvas = canvas;
     this.context = canvas.getContext('2d');
