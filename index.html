@@ -16,7 +16,11 @@
 
     <script src="lib.js"></script>
     <script>
-     drawAllTheThings(document.querySelector('canvas'), '100100100100');
+     const canvas = document.querySelector('canvas');
+     const pattern = '001001010011';
+     const claveVisualization = new ClaveVisualization(canvas, pattern);
+
+     claveVisualization.drawAllTheThings();
     </script>
   </body>
 </html>
