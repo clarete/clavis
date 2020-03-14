@@ -149,9 +149,10 @@ class Clavis {
     /* Draw the moving dot */
     context.save();
     const time = new Date;
+    const tempo = this.tempo / 60;
     const posFromTempo =
-        ((2 * Math.PI) / 3) * time.getSeconds() +
-        ((2 * Math.PI) / 3000) * time.getMilliseconds();
+        ((2 * Math.PI) / tempo) * time.getSeconds() +
+        ((2 * Math.PI) / (tempo * 1000)) * time.getMilliseconds();
     drawDotBeat(...coords(startAngle + posFromTempo));
     context.restore();
 
